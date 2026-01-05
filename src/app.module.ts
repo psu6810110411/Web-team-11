@@ -2,25 +2,33 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ToursModule } from './tours/tours.module';
+import { BookingsModule } from './bookings/bookings.module';
+
+// 1. Import Entity เข้ามาตรงๆ เลย
+import { Tour } from './tours/entities/tour.entity';
+import { Booking } from './bookings/entities/booking.entity';
 
 @Module({
   imports: [
-    // 1. โหลดค่าจากไฟล์ .env
     ConfigModule.forRoot({ isGlobal: true }),
 
-    // 2. ตั้งค่าเชื่อมต่อ Database
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5555'), // ใช้ 5555 ตามที่เราตั้งใน Docker
+      port: parseInt(process.env.DB_PORT || '5555'),
       username: process.env.DB_USERNAME || 'admin',
       password: process.env.DB_PASSWORD || 'password123',
       database: process.env.DB_NAME || 'tour_db',
-      autoLoadEntities: true, // โหลด Entity อัตโนมัติ
-      synchronize: true,      // สร้าง Table ใน DB ให้เอง (เหมาะกับ Dev)
+      
+      // 2. ใส่บรรทัดนี้ครับ! เพื่อบังคับโหลด Entity ทั้งคู่
+      entities: [Tour, Booking],
+      
+      autoLoadEntities: true, 
+      synchronize: true,
     }),
 
     ToursModule,
+    BookingsModule,
   ],
 })
 export class AppModule {}

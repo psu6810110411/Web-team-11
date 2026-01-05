@@ -1,8 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Booking } from '../../bookings/entities/booking.entity'; // <-- 1. อย่าลืม import
 
 @Entity()
 export class Tour {
-  @PrimaryGeneratedColumn('uuid') // ใช้ ID แบบสุ่มตัวอักษรยาวๆ (UUID)
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
@@ -11,7 +12,7 @@ export class Tour {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @Column('decimal', { precision: 10, scale: 2 }) // เก็บเงินทศนิยม 2 ตำแหน่ง
+  @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
   @Column()
@@ -19,4 +20,8 @@ export class Tour {
 
   @Column({ default: true })
   isAvailable: boolean;
+
+  // 2. เพิ่มส่วนนี้ครับ
+  @OneToMany(() => Booking, (booking) => booking.tour)
+  bookings: Booking[];
 }
