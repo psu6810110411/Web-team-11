@@ -7,6 +7,9 @@ import { BookingsModule } from './bookings/bookings.module';
 // 1. Import Entity เข้ามาตรงๆ เลย
 import { Tour } from './tours/entities/tour.entity';
 import { Booking } from './bookings/entities/booking.entity';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { Booking } from './bookings/entities/booking.entity';
       database: process.env.DB_NAME || 'tour_db',
       
       // 2. ใส่บรรทัดนี้ครับ! เพื่อบังคับโหลด Entity ทั้งคู่
-      entities: [Tour, Booking],
+      entities: [Tour, Booking, User],
       
       autoLoadEntities: true, 
       synchronize: true,
@@ -29,6 +32,8 @@ import { Booking } from './bookings/entities/booking.entity';
 
     ToursModule,
     BookingsModule,
+    UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
