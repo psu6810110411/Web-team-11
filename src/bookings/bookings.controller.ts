@@ -1,14 +1,22 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common'; // 1. เพิ่ม Request, UseGuards
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { AuthGuard } from '@nestjs/passport'; // 2. เพิ่ม AuthGuard
 
 @Controller('bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
-  // จุดสำคัญคือตรงนี้ครับ! ต้อง return ผลลัพธ์จาก service
+  // 🔒 3. ล็อกห้องจอง! ต้องมี Token เท่านั้น
+  @UseGuards(AuthGuard('jwt'))
   @Post()
-  create(@Body() createBookingDto: CreateBookingDto) {
+  create(@Request() req, @Body() createBookingDto: CreateBookingDto) {
+    // 4. ทีเด็ดอยู่ตรงนี้! ดึงชื่อจาก Token มาใส่แทนชื่อที่กรอกมา
+    // req.user มาจาก JwtStrategy ที่เราเขียนไว้ครับ
+    console.log('User ที่กำลังจองคือ:', req.user); 
+    
+    createBookingDto.customerName = req.user.username; 
+    
     return this.bookingsService.create(createBookingDto);
   }
 

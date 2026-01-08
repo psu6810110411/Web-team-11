@@ -1,12 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('tours')
 export class ToursController {
   constructor(private readonly toursService: ToursService) {}
 
+  @UseGuards(AuthGuard('jwt'), new RolesGuard('admin'))
   @Post()
   create(@Body() createTourDto: CreateTourDto) {
     return this.toursService.create(createTourDto);
